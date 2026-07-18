@@ -1,8 +1,24 @@
-#include "LevelShowcaseLayer.hpp"
+#pragma once
+#include <Geode/Geode.hpp>
+#include <Geode/ui/Popup.hpp>
 
 using namespace geode::prelude;
 
-LevelShowcaseLayer* LevelShowcaseLayer::create() {
+class LevelShowcaseLayer : public geode::Popup<> {
+protected:
+    bool setup() override;
+
+public:
+    static LevelShowcaseLayer* create();
+    void onResetFeed(cocos2d::CCObject* sender);
+    void onShareShowcase(cocos2d::CCObject* sender);
+};
+
+// ==========================================
+// Implementation (CPP Code)
+// ==========================================
+
+inline LevelShowcaseLayer* LevelShowcaseLayer::create() {
     auto ret = new LevelShowcaseLayer();
     // 400x280 gives it a slightly wider, clean classic canvas for listing runs
     if (ret && ret->initAnchored(400.f, 280.f, "GJ_square01.png")) {
@@ -13,7 +29,7 @@ LevelShowcaseLayer* LevelShowcaseLayer::create() {
     return nullptr;
 }
 
-bool LevelShowcaseLayer::setup() {
+inline bool LevelShowcaseLayer::setup() {
     auto winSize = CCDirector::sharedDirector()->getWinSize();
     this->setTitle("Level Showcase");
 
@@ -71,7 +87,7 @@ bool LevelShowcaseLayer::setup() {
     return true;
 }
 
-void LevelShowcaseLayer::onShareShowcase(CCObject* sender) {
+inline void LevelShowcaseLayer::onShareShowcase(CCObject* sender) {
     FLAlertLayer::create(
         "Showcase Server", 
         "Everyplay feature upload completed successfully!\nClip processing finalized.", 
@@ -79,7 +95,7 @@ void LevelShowcaseLayer::onShareShowcase(CCObject* sender) {
     )->show();
 }
 
-void LevelShowcaseLayer::onResetFeed(CCObject* sender) {
+inline void LevelShowcaseLayer::onResetFeed(CCObject* sender) {
     FLAlertLayer::create(
         "Showcase Settings", 
         "Local level showcase queue has been cleared.", 
