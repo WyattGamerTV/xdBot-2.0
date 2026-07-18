@@ -6,7 +6,7 @@
         },
         "version": "2.752",
         "id": "zilko.xdbot",
-        "name": "xdBot 2.0 (Level Showcase Edition)",
+        "name": "xdBot",
         "developer": "Zilko & WyattGamerTV",
         "description": "Custom fork of xdBot featuring an Everyplay-like Level Showcase UI.",
         "dependencies": [
@@ -132,6 +132,12 @@
                         "description": "Adds the Everyplay-style showcase UI elements next to render settings.",
                         "type": "bool",
                         "default": true
+                },
+                "remove_ui_after_record": {
+                        "name": "Remove UI After Recording",
+                        "description": "Automatically hides the Geometry Dash HUD/UI components when the showcase clip is finalized.",
+                        "type": "bool",
+                        "default": false
                 }
         },
         "resources": {
