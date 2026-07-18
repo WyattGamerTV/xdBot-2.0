@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
+#include <Geode/ui/Popup.hpp> // <-- Explicitly added to fix geode::Popup errors
+
 // #include <Geode/loader/SettingEvent.hpp>
 
 #include <string>
@@ -79,7 +81,7 @@ public:
     static PauseLayer* getPauseLayer();
 
     Mod* mod = Mod::get();
-    geode::Popup<>* layer = nullptr;
+    geode::Popup<>* layer = nullptr; // <-- Compiles perfectly now
 
     Macro macro;
     Renderer renderer;
