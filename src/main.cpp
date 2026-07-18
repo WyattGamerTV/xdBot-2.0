@@ -12,7 +12,7 @@ $execute {
 
   geode::listenForSettingChanges("macro_accuracy", +[](std::string value) {
     auto& g = Global::get();
-    
+
     g.frameFixes = false;
     g.inputFixes = false;
 
@@ -97,7 +97,7 @@ class $modify(PlayLayer) {
           handleButton(false, 2, false);
           g.macro.inputs.push_back(input(frame, 2, true, false));
         }
-        if (m_player2->m_holdingButtons[3]) {
+        if (m_levelSettings->m_holdingButtons[3]) {
           handleButton(false, 3, false);
           g.macro.inputs.push_back(input(frame, 3, true, false));
         }
@@ -305,7 +305,7 @@ class $modify(BGLHook, GJBaseGameLayer) {
     if (!g.macro.frameFixes.empty())
       if (1.f / Global::getTPS() * (frame - g.macro.frameFixes.back().frame) < 1.f / g.frameFixesLimit)
         return;
- 
+
     g.macro.recordFrameFix(frame, m_player1, m_player2);
 
   }
@@ -361,7 +361,7 @@ class $modify(BGLHook, GJBaseGameLayer) {
 
       if (fix.p1.pos.x != 0.f && fix.p1.pos.y != 0.f)
         p1->setPosition(fix.p1.pos);
-        
+
       if (fix.p1.rotate && fix.p1.rotation != 0.f)
         p1->setRotation(fix.p1.rotation);
 
@@ -467,7 +467,7 @@ class $modify(PauseLayer) {
     PauseLayer::goEdit();
 
     Macro::resetState();
-    
+
     Loader::get()->queueInMainThread([] {
       auto& g = Global::get();
       if (g.renderer.recording) g.renderer.stop();
@@ -475,4 +475,48 @@ class $modify(PauseLayer) {
     });
   }
 
+};
+
+// ============================================================================
+// LEVEL SHOWCASE EXTENSION
+// Appended directly to the base xdBot main.cpp pipeline
+// ============================================================================
+
+#include "ui/LevelShowcaseLayer.hpp"
+
+class $modify(ShowcasePauseLayerHook, PauseLayer) {
+  void customSetup() {
+    PauseLayer::customSetup();
+
+    // Check if user has toggled the Showcase option inside mod.json settings
+    if (!Mod::get()->getSettingValue<bool>("enable_level_showcase")) return;
+
+    // xdBot packs its buttons into 'left-button-menu' or a similar structure
+    auto menu = this->getChildByID("left-button-menu");
+    if (!menu) menu = static_cast<CCMenu*>(this->getChildByID("center-button-menu"));
+    if (!menu) return;
+
+    // Generate classic Everyplay green camera icon
+    auto showcaseIcon = CCSprite::createWithSpriteFrameName("GJ_videoBtn_001.png");
+    if (!showcaseIcon) return;
+    showcaseIcon->setScale(0.85f);
+
+    auto showcaseBtn = CCMenuItemSpriteExtra::create(
+      showcaseIcon,
+      this,
+      menu_selector(ShowcasePauseLayerHook::onOpenLevelShowcase)
+    );
+    showcaseBtn->setID("level-showcase-btn");
+
+    // Seamless inject next to the core renderer trigger buttons
+    menu->addChild(showcaseBtn);
+    menu->updateLayout();
+  }
+
+  void onOpenLevelShowcase(CCObject* sender) {
+    auto layer = LevelShowcaseLayer::create();
+    if (layer) {
+      layer->show();
+    }
+  }
 };
